@@ -1,0 +1,52 @@
+{
+	"schemaVersion": 1,
+	"id": "wizardry",
+	"version": "${version}",
+	"name": "Wizardry",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/wizardry/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			{
+				"_comment": "Used unicode to escape dollar sign as it was not working",
+				"value": "com.teamsorcerers.wizardry.Wizardry\\u0024CommonInitializer",
+				"adapter": "kotlin"
+			}
+		],
+		"client": [
+			{
+				"_comment": "Used unicode to escape dollar sign as it was not working",
+				"value": "com.teamsorcerers.wizardry.Wizardry\\u0024ClientInitializer",
+				"adapter": "kotlin"
+			}
+		],
+		"fabric-datagen": [
+			{
+				"value": "com.teamsorcerers.wizardry.WizardryDataGenerator",
+				"adapter": "kotlin"
+			}
+		]
+	},
+	"mixins": [
+		"wizardry.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.15.11",
+		"minecraft": "~1.21",
+		"java": ">=21",
+		"fabric-api": "*",
+		"fabric-language-kotlin": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
