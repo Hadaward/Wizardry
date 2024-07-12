@@ -1,53 +1,73 @@
 package com.teamsorcerers.wizardry
 
-import com.teamsorcerers.wizardry.common.init.ModBlocks
-import com.teamsorcerers.wizardry.common.init.ModCapabilities
-import com.teamsorcerers.wizardry.common.init.ModFluids
-import com.teamsorcerers.wizardry.common.init.ModItems
+import com.teamsorcerers.wizardry.common.init.*
+import com.teamsorcerers.librarianlib.core.util.ModLogManager
+import com.teamsorcerers.librarianlib.glitter.ParticleSystemManager
+import com.teamsorcerers.wizardry.client.particle.ModParticles
+import com.teamsorcerers.wizardry.common.init.*
+import com.teamsorcerers.wizardry.proxy.ClientProxy
+import com.teamsorcerers.wizardry.proxy.IProxy
+import com.teamsorcerers.wizardry.proxy.ServerProxy
+import com.teamsorcerers.wizardry.common.init.ModTags
+import com.teamwizardry.wizardry.client.particle.ModParticles
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.ModInitializer
+import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper
 import net.minecraft.entity.damage.DamageSource
 import net.minecraft.entity.damage.DamageType
 import net.minecraft.registry.RegistryKey
 import net.minecraft.registry.RegistryKeys
+import net.minecraft.resource.ResourceManager
+import net.minecraft.resource.ResourceType
 import net.minecraft.util.Identifier
 import net.minecraft.world.World
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import java.util.function.Consumer
 
 class Wizardry {
-	companion object {
-		private const val MOD_ID = "wizardry"
-		val logger: Logger = LoggerFactory.getLogger(MOD_ID)
+    companion object {
+        const val MODID = "wizardry"
+        val logManager = ModLogManager(MODID, "Wizardry")
 
-		fun getID(path: String): Identifier {
-			return Identifier.of(MOD_ID, path)
-		}
+        var PROXY: IProxy = ServerProxy()
+            private set
 
-		fun getDamageSource(world: World, key: RegistryKey<DamageType>): DamageSource {
-			return DamageSource(world.registryManager.get(RegistryKeys.DAMAGE_TYPE).entryOf(key))
-		}
-	}
+        fun getDamageSource(world: World, key: RegistryKey<DamageType>): DamageSource {
+            return DamageSource(world.registryManager.get(RegistryKeys.DAMAGE_TYPE).entryOf(key))
+        }
 
-	object CommonInitializer : ModInitializer {
-		override fun onInitialize() {
-			logger.info("IT'S LEVI-OH-SA, NOT LEVIOSAA")
+        fun getID(path: String): Identifier { return Identifier.of(MODID, path) }
+    }
 
-			// Inicializadores de classes
-			ModBlocks.init()
-			ModItems.init()
-			ModFluids.init()
+    object CommonInitializer: ModInitializer {
+        override fun onInitialize() {
+            ModTags.init()
+            ModFluids.init()
+            ModItems.init()
+            ModBlocks.init()
+            ModSounds.init()
+            ModPatterns.init()
 
-			/*
+            ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(ModPatterns.ModuleReloadListener)
+        }
+    }
 
-			ModInventoryTabs.init()*/
-		}
-	}
+    object ClientInitializer: ClientModInitializer {
+        override fun onInitializeClient() {
+            PROXY = ClientProxy()
+            ModFluids.initClient()
+            ModBlocks.initClient()
+            ModItems.initClient()
 
-	object ClientInitializer : ClientModInitializer {
-		override fun onInitializeClient() {
-			//TODO("Not yet implemented")
-		}
+            ParticleSystemManager.add(ModParticles.physicsGlitter)
+            ModelLoadingRegistry.INSTANCE.registerModelProvider(ClientInitializer::registerModels)
+        }
 
-	}
+        private fun registerModels(rm: ResourceManager, consumer: Consumer<Identifier>) {
+            consumer.accept(getID("block/mana_battery"))
+            consumer.accept(getID("block/mana_crystal"))
+            consumer.accept(getID("block/mana_crystal_ring"))
+            consumer.accept(getID("block/mana_crystal_ring_outer"))
+        }
+    }
 }

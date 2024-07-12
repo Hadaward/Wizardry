@@ -45,6 +45,9 @@ dependencies {
 		"base",
 		"entity", "item", "block"
 	].each { modImplementation("org.ladysnake.cardinal-components-api:cardinal-components-${it}:${cardinal_components_version}") }
+
+	implementation 'org.snakeyaml:snakeyaml-engine:2.3'
+	include 'org.snakeyaml:snakeyaml-engine:2.3'
 }
 
 processResources {

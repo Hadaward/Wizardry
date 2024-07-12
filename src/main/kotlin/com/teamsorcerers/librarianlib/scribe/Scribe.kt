@@ -4,6 +4,7 @@ import com.teamsorcerers.librarianlib.scribe.nbt.*
 import dev.thecodewarrior.mirror.Mirror
 import dev.thecodewarrior.prism.Prism
 import net.minecraft.block.Block
+import net.minecraft.client.MinecraftClient
 import net.minecraft.enchantment.Enchantment
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.attribute.EntityAttribute
@@ -12,6 +13,8 @@ import net.minecraft.fluid.Fluid
 import net.minecraft.item.Item
 import net.minecraft.potion.Potion
 import net.minecraft.registry.Registries
+import net.minecraft.registry.RegistryKeys
+import net.minecraft.server.MinecraftServer
 import net.minecraft.sound.SoundEvent
 import net.minecraft.stat.StatType
 import net.minecraft.village.VillagerProfession
@@ -35,9 +38,9 @@ public object Scribe {
 
             // minecraft types
 //            DefaultedListSerializerFactory(prism),
-            TagPassthroughSerializerFactory(prism),
-            MCPairSerializerFactory(prism),
-            TextSerializerFactory(prism)
+             TagPassthroughSerializerFactory(prism),
+             MCPairSerializerFactory(prism),
+             TextSerializerFactory(prism)
         )
 
         prism.register(
@@ -92,7 +95,7 @@ public object Scribe {
             BlockBoxSerializer,
             IdentifierSerializer,
             BlockStateSerializer,
-            GameProfileSerializer,
+//            GameProfileSerializer, // Need to figure out how to serialize/deserialize
             ItemStackSerializer,
 //            StatusEffectInstanceSerializer, // The deserializer can return null, which we don't handle gracefully
             EnchantmentLevelEntrySerializer,
@@ -109,13 +112,20 @@ public object Scribe {
             QuaternionSerializer*/
         )
 
+        // Obtain DynamicRegistryManager
+        val registryManager = MinecraftClient.getInstance().world?.registryManager
+            ?: throw Exception("Couldn't get world instance.")
+
+        // Get enchantment registry
+        val enchantmentRegistry = registryManager.get(RegistryKeys.ENCHANTMENT)
+
         // registries
         prism.register(
             RegistryEntrySerializer(Registries.SOUND_EVENT, Mirror.reflect<SoundEvent>()),
             RegistryEntrySerializer(Registries.FLUID, Mirror.reflect<Fluid>()),
             RegistryEntrySerializer(Registries.STATUS_EFFECT, Mirror.reflect<StatusEffect>()),
             RegistryEntrySerializer(Registries.BLOCK, Mirror.reflect<Block>()),
-            RegistryEntrySerializer(Registries.ENCHANTMENT_PROVIDER_TYPE, Mirror.reflect<Enchantment>()),
+            RegistryEntrySerializer(enchantmentRegistry, Mirror.reflect<Enchantment>()),
             RegistryEntrySerializer(Registries.ENTITY_TYPE, Mirror.reflect<EntityType<*>>()),
             RegistryEntrySerializer(Registries.ITEM, Mirror.reflect<Item>()),
             RegistryEntrySerializer(Registries.POTION, Mirror.reflect<Potion>()),

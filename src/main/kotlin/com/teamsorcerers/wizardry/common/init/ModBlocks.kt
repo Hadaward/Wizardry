@@ -6,8 +6,6 @@ import com.teamsorcerers.wizardry.common.block.entity.manabattery.BlockManaBatte
 import com.teamsorcerers.wizardry.mixin.BlocksMixin
 import net.fabricmc.fabric.api.`object`.builder.v1.block.FabricBlockSettings
 import net.minecraft.block.*
-import net.minecraft.block.Blocks.canSpawnOnLeaves
-import net.minecraft.block.Blocks.never
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.item.BlockItem
 import net.minecraft.item.Item
@@ -49,6 +47,6 @@ object ModBlocks {
     }
 
     fun init() {
-        Wizardry.logger.info("Registering blocks...");
+        Wizardry.logManager.root.info("Registering blocks...");
     }
 }
