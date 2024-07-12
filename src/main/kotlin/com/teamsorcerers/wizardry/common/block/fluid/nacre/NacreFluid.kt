@@ -1,8 +1,8 @@
-package com.teamwizardry.wizardry.common.block.fluid.nacre
+package com.teamsorcerers.wizardry.common.block.fluid.nacre
 
-import com.teamwizardry.wizardry.common.init.ModBlocks
-import com.teamwizardry.wizardry.common.init.ModFluids
-import com.teamwizardry.wizardry.common.init.ModItems
+import com.teamsorcerers.wizardry.common.init.ModBlocks
+import com.teamsorcerers.wizardry.common.init.ModFluids
+import com.teamsorcerers.wizardry.common.init.ModItems
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
@@ -15,6 +15,7 @@ import net.minecraft.state.property.Properties
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
 import net.minecraft.world.BlockView
+import net.minecraft.world.World
 import net.minecraft.world.WorldAccess
 import net.minecraft.world.WorldView
 
@@ -47,18 +48,32 @@ abstract class NacreFluid : FlowableFluid() {
     }
 
     open class Flowing : NacreFluid() {
+        override fun isInfinite(world: World?): Boolean {
+            TODO("Not yet implemented")
+        }
+
         override fun appendProperties(builder: StateManager.Builder<Fluid, FluidState>) {
             super.appendProperties(builder)
             builder.add(LEVEL)
         }
 
         override fun getLevel(state: FluidState): Int { return state.get(LEVEL) }
+        override fun getMaxFlowDistance(world: WorldView?): Int {
+            TODO("Not yet implemented")
+        }
 
         override fun isStill(state: FluidState): Boolean { return false }
     }
 
     class Still : NacreFluid() {
         override fun getLevel(state: FluidState): Int { return 8 }
+        override fun getMaxFlowDistance(world: WorldView?): Int {
+            TODO("Not yet implemented")
+        }
+
+        override fun isInfinite(world: World?): Boolean {
+            TODO("Not yet implemented")
+        }
 
         override fun isStill(state: FluidState): Boolean { return true }
     }
